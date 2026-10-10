@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Teacher dashboard | Computer Vision Session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFFFFF; --surface:#F5F7FA; --line:#DCE3EB; --ink:#1A2433; --ink-2:#4A5568; --muted:#718096; --blue:#1F4E8C; --blue-soft:#E7EFF9; --green:#2E7D5B; --green-soft:#E6F3EC; --red:#B4472F; --red-soft:#FBEAE5; --amber:#9A6A00; --amber-soft:#FFF4CC;
+  --serif:"Source Serif 4", Cambria, Georgia, serif; --sans:"Source Sans 3", Calibri, "Segoe UI", Arial, sans-serif; --mono:"Source Code Pro", Consolas, monospace;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151A21; --surface:#1C232C; --line:#2F3B49; --ink:#E6EBF1; --ink-2:#B8C2CF; --muted:#8C99A9; --blue:#7FAEE8; --blue-soft:#1F3049; --green:#6CC59B; --green-soft:#1C3328; --red:#EC8A72; --red-soft:#3A2420; --amber:#E9C46A; --amber-soft:#3B3418}}
+:root[data-theme="dark"]{--bg:#151A21; --surface:#1C232C; --line:#2F3B49; --ink:#E6EBF1; --ink-2:#B8C2CF; --muted:#8C99A9; --blue:#7FAEE8; --blue-soft:#1F3049; --green:#6CC59B; --green-soft:#1C3328; --red:#EC8A72; --red-soft:#3A2420; --amber:#E9C46A; --amber-soft:#3B3418}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+[hidden]{display:none !important}
+.top{position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; padding:10px 22px}
+.top h1{font-family:var(--serif); font-size:20px; margin:0; flex:1}
+.top .who{font-size:14px; color:var(--ink-2)}
+main{padding:24px clamp(16px,3vw,32px) 60px; max-width:1400px; margin:0 auto}
+h2{font-family:var(--serif); font-size:24px; margin:0 0 10px}
+h3{font-size:18px; margin:24px 0 8px}
+.btn{border:1px solid var(--blue); background:var(--blue); color:#fff; border-radius:8px; padding:7px 14px; cursor:pointer; font-weight:600}
+.btn.ghost{background:transparent; color:var(--blue); border-color:var(--line)}
+.btn.danger{background:transparent; color:var(--red); border-color:var(--red)}
+.btn.sm{padding:4px 10px; font-size:14px}
+.btn:disabled{opacity:.5; cursor:default}
+.row{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.card{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--surface); margin:0 0 16px}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:0 0 18px}
+.stat{border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+.stat b{display:block; font-family:var(--serif); font-size:30px; color:var(--blue); line-height:1.1}
+.stat span{font-size:14px; color:var(--ink-2)}
+.tabs{display:flex; gap:4px; border-bottom:2px solid var(--line); margin:0 0 16px; flex-wrap:wrap}
+.tabs button{background:none; border:0; padding:8px 14px; cursor:pointer; color:var(--ink-2); border-bottom:3px solid transparent; margin-bottom:-2px; font-weight:600}
+.tabs button[aria-selected="true"]{color:var(--blue); border-bottom-color:var(--blue)}
+.wrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px}
+table{border-collapse:collapse; width:100%; font-size:15px}
+th,td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap}
+th{background:var(--surface); font-size:14px; position:sticky; top:0; cursor:pointer; user-select:none}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--blue-soft)}
+td.n{font-family:var(--mono); text-align:right}
+.pill{display:inline-block; border-radius:999px; padding:1px 8px; font-size:13px; font-weight:600}
+.pill.ok{background:var(--green-soft); color:var(--green)} .pill.no{background:var(--surface); color:var(--muted); border:1px solid var(--line)} .pill.warn{background:var(--amber-soft); color:var(--amber)}
+.bar{display:inline-block; width:60px; height:6px; background:var(--line); border-radius:3px; overflow:hidden; vertical-align:middle; margin-right:6px}
+.bar i{display:block; height:100%; background:var(--green)}
+input[type=search], input[type=number], textarea, select{border:1px solid var(--line); border-radius:8px; padding:7px 10px; background:var(--bg)}
+textarea{width:100%; min-height:320px; font-family:var(--mono); font-size:13px}
+.err{color:var(--red)} .muted{color:var(--muted)} .good{color:var(--green)} .bad{color:var(--red)}
+dialog{border:1px solid var(--line); border-radius:12px; padding:0; width:min(920px,96vw); max-height:90vh; background:var(--bg); color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+.dhead{display:flex; justify-content:space-between; align-items:start; gap:10px; padding:16px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg)}
+.dbody{padding:16px 20px 24px}
+.ans td{white-space:normal; vertical-align:top}
+.ans td.q{max-width:300px}
+.mono{font-family:var(--mono)}
+.toast{position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:8px 16px; border-radius:8px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header class="top"><h1>Computer Vision Session &middot; Teacher dashboard</h1><span class="who" id="who"></span><span id="topBtns"></span></header>
+<main id="main"><p class="muted">Loading…</p></main>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="config.js"></script>
+<script type="module">
+const V="10.12.2";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toast=m=>{ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("show"),2000); };
+const PRACS=["P1","P2","P3","P4","P5"];
+const TASK_OF={ "P1":"t1","P2":"t2","P3":"t3","P4":"t4","P5":"t5" };
+const STEP_TOTAL={ "P1":10,"P2":9,"P3":10,"P4":9,"P5":8 };
+const PAGES_TOTAL=22;
+const LABELS={ t1:"P1 checkpoint (enhancement)", t2:"P2 checkpoint (Otsu)", t3:"P3 checkpoint (OpenCV)", t4:"P4 checkpoint (YOLO)", t5:"P5 checkpoint (SAM)", exit:"Exit quiz" };
+const cfg=window.FIREBASE_CONFIG||{};
+const main=$("#main");
+if(!cfg.apiKey||String(cfg.apiKey).startsWith("PASTE")){ main.innerHTML=`<div class="card"><h2>Not connected</h2><p>Paste your Firebase web config into <code>config.js</code> first. See SETUP.md.</p></div>`; throw new Error("no config"); }
+
+const A=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
+const U=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
+const D=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
+const app=A.initializeApp(cfg); const auth=U.getAuth(app); const db=D.getFirestore(app);
+const provider=new U.GoogleAuthProvider(); provider.setCustomParameters({prompt:"select_account"});
+
+let KEY=null, DATA=null, view="students", sortBy="enrollment", sortDir=1, q="";
+const GR=Object.assign({maxAttempts:4, penalty:0.25}, window.GRADING||{});
+
+U.onAuthStateChanged(auth, async u=>{
+  if(!u){ $("#who").textContent=""; $("#topBtns").innerHTML=""; main.innerHTML=`<div class="card"><h2>Teacher sign-in</h2><p>Only accounts listed as teachers in the Firestore security rules can open this dashboard.</p><button class="btn" id="si">Sign in with Google</button></div>`;
+    $("#si").onclick=()=>U.signInWithPopup(auth,provider).catch(e=>toast(e.code)); return; }
+  $("#who").textContent=u.email; $("#topBtns").innerHTML=`<button class="btn ghost sm" id="so">Sign out</button>`; $("#so").onclick=()=>U.signOut(auth);
+  main.innerHTML=`<p class="muted">Checking access…</p>`;
+  try{ const k=await D.getDoc(D.doc(db,"config","answerKey")); KEY=k.exists()?k.data():null; }
+  catch(e){ main.innerHTML=`<div class="card"><h2>Not authorised</h2><p>${esc(u.email)} is not a teacher account for this site. Add it to <code>isTeacher()</code> in firestore.rules and publish the rules.</p></div>`; return; }
+  await loadAll(); render();
+});
+
+async function loadAll(){
+  main.innerHTML=`<p class="muted">Loading data…</p>`;
+  const col=async n=>(await D.getDocs(D.collection(db,n))).docs.map(d=>({_id:d.id,...d.data()}));
+  const [users,atts,prog]=await Promise.all(["users","attempts","progress"].map(col));
+  const A={}; atts.forEach(a=>{ ((A[a.uid]=A[a.uid]||{})[a.tid]=A[a.uid][a.tid]||{})[a.qid]=a; });
+  const P={}; prog.forEach(p=>P[p._id]=p);
+  DATA={users, A, P, atts};
+}
+
+/* ---------- grading (from server-verified attempt records) ---------- */
+const qMarks=a=>a&&a.correct?Math.max(0,1-GR.penalty*(a.n-1)):0;
+const r2=x=>Math.round(x*100)/100;
+function gradeTask(tid, at){
+  const k=(KEY&&KEY.tasks&&KEY.tasks[tid])||{}; let score=0, max=0, started=false, done=0; const rows=[];
+  for(const [qid,kq] of Object.entries(k)){
+    const pts=Number(kq.pts||1); max+=pts; const a=(at||{})[qid];
+    if(a){ started=true; if(a.correct||a.n>=GR.maxAttempts) done++; }
+    const got=qMarks(a)*pts; score+=got; rows.push({qid,kq,a,got,pts});
+  }
+  return {score:r2(score), max, rows, started, done, total:rows.length};
+}
+function studentSummary(u){
+  const at=DATA.A[u.uid]||{}; const prog=(DATA.P[u.uid]||{}).steps||{};
+  const out={u, pr:{}, total:0, max:0, steps:{}, last:null};
+  for(const p of [...PRACS,"exit"]){ const t=p==="exit"?"exit":TASK_OF[p]; const g=gradeTask(t, at[t]); out.pr[p]=g; out.total+=g.score; out.max+=g.max; }
+  out.total=r2(out.total);
+  PRACS.forEach(p=>out.steps[p]=Object.values(prog[p]||{}).filter(Boolean).length);
+  const pd=DATA.P[u.uid]||{}; out.seen=Object.keys(pd.seen||{}).length; out.quick=Object.values(pd.quiz||{}).reduce((a,o)=>a+Object.keys(o||{}).length,0);
+  const times=[...Object.values(at).flatMap(o=>Object.values(o).map(a=>a.at)), (DATA.P[u.uid]||{}).updatedAt].filter(t=>t&&t.toDate).map(t=>t.toDate());
+  out.last=times.length?new Date(Math.max(...times)):null;
+  return out;
+}
+const fmt=d=>d?d.toLocaleString([], {dateStyle:"medium", timeStyle:"short"}):"";
+
+/* ---------- render ---------- */
+function render(){
+  const rows=DATA.users.map(studentSummary);
+  const nAns=DATA.atts.length, nOk=DATA.atts.filter(a=>a.correct).length;
+  const avg=rows.length?(rows.reduce((a,r)=>a+r.total,0)/rows.length):0;
+  const complete=rows.filter(r=>Object.values(r.pr).every(g=>g.done===g.total&&g.total>0)).length;
+  main.innerHTML=`
+  ${!KEY?`<div class="card" style="border-color:var(--amber); background:var(--amber-soft)"><b>No answer key loaded yet.</b> Students can't check answers until you open the <b>Answer key</b> tab and save <code>answer_key.json</code>.</div>`:""}
+  <div class="cards"><div class="stat"><b>${rows.length}</b><span>registered students</span></div><div class="stat"><b>${nAns}</b><span>questions answered (${nAns?Math.round(nOk/nAns*100):0}% correct)</span></div><div class="stat"><b>${avg.toFixed(1)}</b><span>average total (of ${rows[0]?rows[0].max:"–"})</span></div><div class="stat"><b>${complete}</b><span>finished everything</span></div></div>
+  <div class="tabs" role="tablist">${[["students","Students"],["tasks","By question"],["key","Answer key"],["help","Help"]].map(([k,l])=>`<button role="tab" data-v="${k}" aria-selected="${view===k}">${l}</button>`).join("")}</div>
+  <div id="pane"></div>`;
+  main.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ view=b.dataset.v; render(); });
+  const pane=$("#pane");
+  if(view==="students") renderStudents(pane, rows);
+  else if(view==="tasks") renderTasks(pane, rows);
+  else if(view==="key") renderKey(pane);
+  else pane.innerHTML=`<div class="card"><h3 style="margin-top:0">How auto-grading works</h3><ul>
+   <li>Each question is checked the moment a student presses <b>Check answer</b>. The database rules compare the answer with the key stored in <code>config/answerKey</code>, which students can't read.</li>
+   <li>A record is accepted as "correct" only if the answer really matches the key, so students can't fake a correct result or write marks.</li>
+   <li>Each question allows ${GR.maxAttempts} attempts. Marks: 1 for correct on the first try, ${GR.penalty} less for each retry, 0 if never correct. A correct answer is final.</li>
+   <li>Numbers are accepted within the tolerance in the key (0.05 = &plusmn;5%).</li>
+   <li>Progress is stored in the database, so students keep their answers and marks after signing out or on another device.</li>
+   <li>If you correct the key after students have answered, press <b>Regrade with current key</b> to re-check every stored answer.</li>
+   <li><b>Reset</b> (in a student's detail view) deletes their attempts on one question or task so they can start it again.</li>
+   <li>Step ticks are self-reported progress, not proof of work.</li></ul></div>`;
+}
+
+function renderStudents(pane, rows){
+  const ql=q.toLowerCase();
+  let list=rows.filter(r=>!ql||[r.u.name,r.u.enrollment,r.u.email].join(" ").toLowerCase().includes(ql));
+  const val=r=> sortBy==="enrollment"?r.u.enrollment: sortBy==="name"?r.u.name.toLowerCase(): sortBy==="total"?r.total: sortBy==="last"?(r.last?r.last.getTime():0): (r.pr[sortBy]?r.pr[sortBy].score:0);
+  list.sort((a,b)=>{ const x=val(a), y=val(b); return (x>y?1:x<y?-1:0)*sortDir; });
+  const th=(k,l)=>`<th data-s="${k}">${l}${sortBy===k?(sortDir>0?" &#9650;":" &#9660;"):""}</th>`;
+  const cell=g=>g.started?`<b>${g.score}</b>/${g.max}${g.done<g.total?` <span class="pill warn" title="questions finished">${g.done}/${g.total}</span>`:""}`:`<span class="pill no">&ndash;</span>`;
+  pane.innerHTML=`<div class="row" style="margin-bottom:12px"><input type="search" id="q" placeholder="Search name, enrollment or email" value="${esc(q)}" style="min-width:280px">
+    <button class="btn ghost" id="csv">Download CSV</button><button class="btn ghost" id="rl">Reload</button><button class="btn ghost" id="rg">Regrade with current key</button></div>
+  <div class="wrap"><table><thead><tr>${th("enrollment","Enrollment")}${th("name","Name")}${PRACS.map(p=>th(p,p)).join("")}${th("exit","Exit")}${th("total","Total")}<th>Pages seen</th><th>Quick checks</th>${th("last","Last activity")}</tr></thead>
+  <tbody>${list.map(r=>`<tr data-uid="${esc(r.u.uid)}"><td class="mono">${esc(r.u.enrollment)}</td><td>${esc(r.u.name)}</td>
+    ${PRACS.map(p=>`<td><span class="bar" title="${r.steps[p]} of ${STEP_TOTAL[p]} steps ticked"><i style="width:${Math.min(100,r.steps[p]/STEP_TOTAL[p]*100)}%"></i></span>${cell(r.pr[p])}</td>`).join("")}
+    <td>${cell(r.pr.exit)}</td><td class="n"><b>${r.total}</b>/${r.max}</td><td class="n">${r.seen}/${PAGES_TOTAL}</td><td class="n">${r.quick}</td><td>${esc(fmt(r.last))}</td></tr>`).join("")||`<tr><td colspan="12" class="muted">No students yet.</td></tr>`}</tbody></table></div>
+  <p class="muted">Green bars: steps ticked. Amber badge: questions finished, when a task is still in progress. Click a row for answers, attempts and resets.</p>`;
+  const qi=$("#q"); qi.oninput=()=>{ q=qi.value; renderStudents(pane, rows); const n=$("#q"); n.focus(); n.setSelectionRange(n.value.length,n.value.length); };
+  pane.querySelectorAll("th[data-s]").forEach(h=>h.onclick=()=>{ const k=h.dataset.s; if(sortBy===k) sortDir*=-1; else { sortBy=k; sortDir=(k==="enrollment"||k==="name")?1:-1; } renderStudents(pane, rows); });
+  pane.querySelectorAll("tbody tr[data-uid]").forEach(tr=>tr.onclick=()=>openStudent(tr.dataset.uid));
+  $("#csv").onclick=()=>csv(rows); $("#rl").onclick=async()=>{ await loadAll(); render(); }; $("#rg").onclick=regrade;
+}
+
+function renderTasks(pane, rows){
+  const tids=[...PRACS.map(p=>TASK_OF[p]),"exit"];
+  pane.innerHTML=tids.map(t=>{ const k=(KEY&&KEY.tasks&&KEY.tasks[t])||{};
+    const qrows=Object.keys(k).map(qid=>{ const as=DATA.atts.filter(a=>a.tid===t&&a.qid===qid); const ok=as.filter(a=>a.correct); const first=ok.filter(a=>a.n===1).length; const avgN=ok.length?(ok.reduce((s,a)=>s+a.n,0)/ok.length).toFixed(1):"–";
+      const out=as.filter(a=>!a.correct&&a.n>=GR.maxAttempts).length;
+      return `<tr><td class="mono">${esc(qid)}</td><td class="n">${as.length}</td><td class="n">${as.length?Math.round(ok.length/as.length*100):0}%</td><td class="n">${first}</td><td class="n">${avgN}</td><td class="n">${out}</td><td class="muted">${esc(k[qid].type==="num"?`${k[qid].value} ±${Math.round((k[qid].tol||0)*100)}%`:k[qid].value)}</td></tr>`; }).join("");
+    return `<h3>${LABELS[t]}</h3><div class="wrap"><table><thead><tr><th>Question</th><th>Answered</th><th>Correct</th><th>Right first try</th><th>Avg attempts when correct</th><th>Out of attempts</th><th>Key</th></tr></thead><tbody>${qrows||`<tr><td colspan="7" class="muted">No key for this task.</td></tr>`}</tbody></table></div>`; }).join("")+
+    `<p class="muted">A question that many students run out of attempts on may have a reference value that differs on your MATLAB, OpenCV or model version: check the key, then press Regrade.</p>`;
+}
+
+function renderKey(pane){
+  pane.innerHTML=`<div class="card"><p style="margin-top:0">Load <code>answer_key.json</code> from your computer (it is <b>not</b> in the public repository), check it, then save. Only teacher accounts can read or change the saved key. After changing values, use <b>Regrade with current key</b> on the Students tab.</p>
+   <div class="row"><input type="file" id="kf" accept=".json,application/json"><button class="btn" id="ks">Save key to database</button><span id="km"></span></div></div>
+   <textarea id="kt" spellcheck="false">${esc(KEY?JSON.stringify(KEY,null,2):"")}</textarea>`;
+  $("#kf").onchange=async e=>{ const f=e.target.files[0]; if(f) $("#kt").value=await f.text(); };
+  $("#ks").onclick=async()=>{ let obj; try{ obj=JSON.parse($("#kt").value); if(!obj.tasks) throw new Error("missing 'tasks'");
+      for(const [t,qs] of Object.entries(obj.tasks)) for(const [qid,k] of Object.entries(qs)){ if(k.type==="num"){ if(typeof k.value!=="number"||typeof k.tol!=="number") throw new Error(`${t}.${qid}: num needs numeric value and tol`); } else if(k.type==="choice"){ if(typeof k.value!=="string") throw new Error(`${t}.${qid}: choice value must be a string`); } else throw new Error(`${t}.${qid}: type must be num or choice`); }
+    }catch(e){ $("#km").innerHTML=`<span class="err">Invalid key: ${esc(e.message)}</span>`; return; }
+    try{ await D.setDoc(D.doc(db,"config","answerKey"), obj); KEY=obj; toast("Answer key saved"); render(); }catch(e){ $("#km").innerHTML=`<span class="err">${esc(e.code||e.message)}</span>`; } };
+}
+
+function isRight(k,a){ if(!k) return false; if(k.type==="num") return typeof a==="number" && Math.abs(a-k.value)<=Math.abs(k.value)*k.tol+1e-9; return typeof a==="string" && a===k.value; }
+async function regrade(){
+  if(!KEY){ toast("Load the answer key first"); return; }
+  const changes=DATA.atts.filter(a=>{ const k=(KEY.tasks[a.tid]||{})[a.qid]; return k && isRight(k,a.ans)!==!!a.correct; });
+  if(!changes.length){ toast("All stored answers already match the key"); return; }
+  if(!confirm(`${changes.length} stored answer(s) change result with the current key. Update them?`)) return;
+  try{ for(let i=0;i<changes.length;i+=400){ const b=D.writeBatch(db); changes.slice(i,i+400).forEach(a=>{ const k=KEY.tasks[a.tid][a.qid]; b.update(D.doc(db,"attempts",a._id),{correct:isRight(k,a.ans)}); }); await b.commit(); }
+    toast(`Regraded ${changes.length} answer(s)`); await loadAll(); render(); }catch(e){ toast("Regrade failed: "+(e.code||e.message)); }
+}
+
+function openStudent(uid){
+  const u=DATA.users.find(x=>x.uid===uid); const r=studentSummary(u); const at=DATA.A[uid]||{};
+  const tids=[...PRACS.map(p=>TASK_OF[p]),"exit"]; const dlg=$("#dlg");
+  dlg.innerHTML=`<div class="dhead"><div><h2 style="margin:0">${esc(u.name)}</h2><div class="muted">${esc(u.enrollment)} &middot; ${esc(u.email)} &middot; registered ${esc(fmt(u.createdAt&&u.createdAt.toDate?u.createdAt.toDate():null))}</div>
+    <div style="margin-top:4px"><b>Total ${r.total} / ${r.max}</b> &middot; steps ticked: ${PRACS.map(p=>`${p} ${r.steps[p]}/${STEP_TOTAL[p]}`).join(", ")}</div></div><button class="btn ghost sm" id="dc">Close</button></div>
+  <div class="dbody">${tids.map(t=>{ const g=r.pr[t==="exit"?"exit":PRACS.find(p=>TASK_OF[p]===t)];
+    return `<h3>${LABELS[t]} <b>${g.score}/${g.max}</b> ${g.started?`<button class="btn danger sm" data-rt="${t}">Reset task</button>`:`<span class="pill no">not started</span>`}</h3>
+    ${g.started?`<div class="wrap"><table class="ans"><thead><tr><th>Q</th><th>Last answer</th><th>Attempts</th><th>Result</th><th>Marks</th><th>Expected</th><th></th></tr></thead><tbody>${g.rows.map(x=>`<tr><td class="q mono">${esc(x.qid)}</td><td>${x.a?esc(x.a.ans):"<span class='muted'>–</span>"}</td><td class="n">${x.a?x.a.n:0}/${GR.maxAttempts}</td>
+      <td>${!x.a?"":x.a.correct?`<span class="good">&#10003; correct</span>`:(x.a.n>=GR.maxAttempts?`<span class="bad">&#10007; out of attempts</span>`:`<span class="bad">&#10007; trying</span>`)}</td><td class="n">${r2(x.got)}</td>
+      <td class="muted">${x.kq.type==="num"?`${esc(x.kq.value)} &plusmn;${Math.round((x.kq.tol||0)*100)}%`:esc(x.kq.value)}</td><td>${x.a?`<button class="btn ghost sm" data-rq="${t}__${esc(x.qid)}">Reset</button>`:""}</td></tr>`).join("")}</tbody></table></div>`:""}`; }).join("")}
+   <div class="row" style="margin-top:20px"><button class="btn danger" id="rr">Reset registration</button><span class="muted">Deletes name and enrollment so the student can register again. Answers are kept.</span></div></div>`;
+  dlg.showModal();
+  $("#dc").onclick=()=>dlg.close();
+  const del=async ids=>{ const b=D.writeBatch(db); ids.forEach(id=>b.delete(D.doc(db,"attempts",id))); await b.commit(); };
+  dlg.querySelectorAll("[data-rq]").forEach(b=>b.onclick=async()=>{ const [t,qid]=b.dataset.rq.split("__"); if(!confirm(`Reset ${u.name}'s attempts on ${LABELS[t]} question ${qid}?`)) return;
+    try{ await del([`${uid}__${t}__${qid}`]); toast("Question reset"); await loadAll(); render(); openStudent(uid); }catch(e){ toast(e.code||e.message); } });
+  dlg.querySelectorAll("[data-rt]").forEach(b=>b.onclick=async()=>{ const t=b.dataset.rt; if(!confirm(`Reset all of ${u.name}'s attempts on ${LABELS[t]}?`)) return;
+    try{ await del(Object.keys(at[t]||{}).map(qid=>`${uid}__${t}__${qid}`)); toast("Task reset"); await loadAll(); render(); openStudent(uid); }catch(e){ toast(e.code||e.message); } });
+  $("#rr").onclick=async()=>{ if(!confirm(`Reset ${u.name} (${u.enrollment})? They will register again with corrected details. Answers are kept.`)) return;
+    try{ const b=D.writeBatch(db); b.delete(D.doc(db,"users",uid)); b.delete(D.doc(db,"enrollments",u.enrollment)); await b.commit(); toast("Registration reset"); dlg.close(); await loadAll(); render(); }catch(e){ toast(e.code||e.message); } };
+}
+
+function csv(rows){
+  const head=["Enrollment","Name","Email",...PRACS.flatMap(p=>[`${p} steps`,`${p} marks`,`${p} max`]),"Exit marks","Exit max","Total","Max","Pages seen","Quick checks","Last activity"];
+  const cell=v=>{ let s=String(v??""); if(/^[=+\-@]/.test(s)) s="'"+s; return `"${s.replace(/"/g,'""')}"`; };
+  const lines=[head.map(cell).join(",")].concat(rows.map(r=>[r.u.enrollment,r.u.name,r.u.email,...PRACS.flatMap(p=>[r.steps[p],r.pr[p].score,r.pr[p].max]),r.pr.exit.score,r.pr.exit.max,r.total,r.max,r.seen,r.quick,fmt(r.last)].map(cell).join(",")));
+  const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`cv_session_marks_${new Date().toISOString().slice(0,10)}.csv`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+</script>
+</body>
+</html>
